@@ -600,7 +600,7 @@
     <script src="VIB34D_WORKING_CORE_ARCHITECTURE.js"></script>
     <script src="VIB34D_MOIRE_RGB_SYSTEM.js"></script>
     <script src="VIB34D_INTEGRATED_SYSTEM_BRIDGE.js"></script>
-    <script src="VIB34D_WEBGL_FALLBACK.js"></script>
+    <!-- WebGL fallback removed - using direct core implementation -->
     <script>
         // Editor Dashboard System
         class VIB34DEditorDashboard {
@@ -756,58 +756,32 @@
             
             initializeElementVisualizer(elementData, canvas) {
                 try {
-                    // Check for WebGL fallback system first
-                    if (window.VIB34D_WEBGL_FALLBACK && !window.VIB34D_WEBGL_FALLBACK.isWebGLSupported) {
-                        console.log(`🎨 Using Canvas 2D fallback for ${elementData.id}`);
-                        
-                        // Create fallback visualizer
-                        const fallbackRenderer = window.VIB34D_WEBGL_FALLBACK.createFallbackVisualizer(canvas, {
-                            geometryType: elementData.geometry,
-                            gridDensity: elementData.properties.gridDensity,
-                            rotationSpeed: elementData.properties.rotationSpeed,
-                            patternIntensity: 1.5,
-                            morphFactor: elementData.properties.morphFactor,
-                            dimension: elementData.properties.dimension,
-                            lineThickness: elementData.properties.lineThickness || 0.03
-                        });
-                        
-                        if (fallbackRenderer) {
-                            fallbackRenderer.start();
-                            elementData.visualizer = fallbackRenderer;
-                            
-                            // Mark element as having fallback visualizer
-                            document.getElementById(elementData.id).classList.add('has-visualizer', 'fallback-renderer');
-                            console.log(`✅ Fallback visualizer created for ${elementData.id}`);
-                            return;
-                        }
-                    }
-                    
-                    // Try WebGL system
+                    // Direct WebGL implementation - NO FALLBACKS
                     if (window.VIB34D_WorkingCore) {
-                        console.log(`🎨 Using WebGL for ${elementData.id}`);
+                        console.log(`🚀 Creating WebGL visualizer for ${elementData.id}`);
                         
+                        // Select appropriate geometry class
+                        let GeometryClass;
+                        switch(elementData.geometry) {
+                            case 'hypercube': GeometryClass = window.VIB34D_WorkingCore.HypercubeGeometry; break;
+                            case 'sphere': GeometryClass = window.VIB34D_WorkingCore.HypersphereGeometry; break;
+                            case 'torus': GeometryClass = window.VIB34D_WorkingCore.TorusGeometry; break;
+                            case 'klein': GeometryClass = window.VIB34D_WorkingCore.KleinBottleGeometry; break;
+                            case 'mobius': GeometryClass = window.VIB34D_WorkingCore.MobiusGeometry; break;
+                            case 'lorenz': GeometryClass = window.VIB34D_WorkingCore.LorenzAttractorGeometry; break;
+                            case 'hopf': GeometryClass = window.VIB34D_WorkingCore.HopfLinkGeometry; break;
+                            case 'tesseract': GeometryClass = window.VIB34D_WorkingCore.TesseractGeometry; break;
+                            default: GeometryClass = window.VIB34D_WorkingCore.HypercubeGeometry;
+                        }
+                        
+                        // Create the core with proper geometry
                         const core = new window.VIB34D_WorkingCore.HypercubeCore(canvas, {
-                            onError: (error) => {
-                                console.error(`WebGL visualizer error for ${elementData.id}:`, error);
-                                
-                                // Fallback to Canvas 2D if WebGL fails
-                                if (window.VIB34D_WEBGL_FALLBACK) {
-                                    console.log(`🎨 WebGL failed, switching to Canvas 2D fallback for ${elementData.id}`);
-                                    const fallbackRenderer = window.VIB34D_WEBGL_FALLBACK.createFallbackVisualizer(canvas, {
-                                        geometryType: elementData.geometry,
-                                        gridDensity: elementData.properties.gridDensity,
-                                        rotationSpeed: elementData.properties.rotationSpeed,
-                                        patternIntensity: 1.5,
-                                        morphFactor: elementData.properties.morphFactor,
-                                        dimension: elementData.properties.dimension
-                                    });
-                                    
-                                    if (fallbackRenderer) {
-                                        fallbackRenderer.start();
-                                        elementData.visualizer = fallbackRenderer;
-                                        document.getElementById(elementData.id).classList.add('has-visualizer', 'fallback-renderer');
-                                    }
-                                }
+                            geometry: new GeometryClass(),
+                            initialUniforms: {
+                                u_dimension: elementData.properties.dimension,
+                                u_morphFactor: elementData.properties.morphFactor,
+                                u_gridDensity: elementData.properties.gridDensity,
+                                u_rotationSpeed: elementData.properties.rotationSpeed
                             }
                         });
                         
