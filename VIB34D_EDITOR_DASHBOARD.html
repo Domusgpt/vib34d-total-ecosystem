@@ -1211,6 +1211,7 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
         }
         
         // Global functions for toolbar
+        // /*
         function newProject() {
             if (confirm('Create new project? This will clear the current workspace.')) {
                 // Properly dispose all elements before clearing
@@ -1260,17 +1261,22 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
         
         function togglePreview() {
             const container = document.querySelector('.editor-container');
-            editorDashboard.isPreviewMode = !editorDashboard.isPreviewMode;
+            if (editorDashboard) { // Add a guard for editorDashboard
+                editorDashboard.isPreviewMode = !editorDashboard.isPreviewMode;
             
-            if (editorDashboard.isPreviewMode) {
-                container.classList.add('preview-mode');
-                document.querySelector('[onclick="togglePreview()"]').textContent = 'Edit';
+                if (editorDashboard.isPreviewMode) {
+                    container.classList.add('preview-mode');
+                    document.querySelector('[onclick="togglePreview()"]').textContent = 'Edit';
+                } else {
+                    container.classList.remove('preview-mode');
+                    document.querySelector('[onclick="togglePreview()"]').textContent = 'Preview';
+                }
             } else {
-                container.classList.remove('preview-mode');
-                document.querySelector('[onclick="togglePreview()"]').textContent = 'Preview';
+                console.warn("togglePreview: editorDashboard not ready");
             }
         }
         
+        // /* // Temporarily commenting out the rest // This line was the start of the comment block for exportCode and generatePage
         function exportCode() {
             let fullCode = `
 <!DOCTYPE html>
