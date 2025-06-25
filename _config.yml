@@ -4,11 +4,11 @@ plugins:
 
 # Don't process these files
 exclude:
-  - VIB34D_*.js
-  - "*.js"
   - node_modules/
   - package*.json
   - setup-test-environment.sh
+  - "*.md"
+  - README.md
 
 # Keep raw files for direct access
 keep_files:

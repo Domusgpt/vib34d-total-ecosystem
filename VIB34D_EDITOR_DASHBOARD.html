@@ -1280,19 +1280,20 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
 `;
             });
             
-            fullCode += `
-    <script>
-        // Initialize VIB34D elements
-        ${Array.from(editorDashboard.elements.values()).map(elementData => {
-            return `
+            fullCode += '<script>\n';
+            fullCode += '// Initialize VIB34D elements\n';
+            
+            Array.from(editorDashboard.elements.values()).forEach(elementData => {
+                fullCode += `
         // ${elementData.name}
-        const ${elementData.id}Config = ${JSON.stringify({
+        const ${elementData.id}Config = ` + JSON.stringify({
             type: elementData.type,
             geometry: elementData.geometry,
             properties: elementData.properties,
             relationships: elementData.relationships
-        }, null, 8)};
+        }, null, 8) + `;\n`;
         
+                fullCode += `
         const ${elementData.id}Canvas = document.querySelector('#${elementData.id} canvas');
         const ${elementData.id}Core = new VIB34D_WorkingCore.HypercubeCore(${elementData.id}Canvas);
         ${elementData.id}Core.updateParameters({
@@ -1302,10 +1303,10 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
             gridDensity: ${elementData.properties.gridDensity},
             rotationSpeed: ${elementData.properties.rotationSpeed}
         });
-        ${elementData.id}Core.start();
-            `.trim();
-        }).join('\n\n')}
-    </script>
+        ${elementData.id}Core.start();\n`;
+            });
+            
+            fullCode += '</script>';
 </body>
 </html>
             `;
