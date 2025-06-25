@@ -1,0 +1,33 @@
+{
+  "name": "@vib34d/test-suite",
+  "version": "1.0.0",
+  "description": "Comprehensive MCP + Puppeteer test suite for VIB34D ecosystem",
+  "main": "VIB34D_MCP_PUPPETEER_TEST_SUITE.js",
+  "scripts": {
+    "test": "node VIB34D_MCP_PUPPETEER_TEST_SUITE.js",
+    "test:headless": "HEADLESS=true node VIB34D_MCP_PUPPETEER_TEST_SUITE.js",
+    "test:visual": "HEADLESS=false node VIB34D_MCP_PUPPETEER_TEST_SUITE.js",
+    "test:quick": "node VIB34D_QUICK_MCP_TEST.js",
+    "test:ai": "node VIB34D_AI_INTERFACE_TEST.js",
+    "test:performance": "node VIB34D_PERFORMANCE_BENCHMARK.js",
+    "serve": "python -m http.server 8002",
+    "serve:background": "python -m http.server 8002 &",
+    "test:full": "npm run serve:background && sleep 3 && npm test",
+    "report": "open test-results/vib34d-test-report-*.html",
+    "clean": "rm -rf test-results/*"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0",
+    "@modelcontextprotocol/sdk": "^0.5.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "jest-puppeteer": "^9.0.0"
+  },
+  "jest": {
+    "preset": "jest-puppeteer",
+    "testMatch": ["**/?(*.)+(spec|test).[jt]s?(x)"],
+    "testTimeout": 30000
+  }
+}
