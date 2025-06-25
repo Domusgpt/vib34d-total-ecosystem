@@ -1,0 +1,26 @@
+# Jekyll configuration for VIB34D
+plugins:
+  - jekyll-relative-links
+
+# Don't process these files
+exclude:
+  - VIB34D_*.js
+  - "*.js"
+  - node_modules/
+  - package*.json
+  - setup-test-environment.sh
+
+# Keep raw files for direct access
+keep_files:
+  - VIB34D_EDITOR_DASHBOARD.html
+  - VIB34D_TOTAL_ECOSYSTEM_DEMO.html
+  - VIB34D_PRODUCTION_SPECTACULAR.html
+  - VIB34D_COMPLETE_INTEGRATED_DEMO.html
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+
+# Site settings
+title: VIB34D Total Ecosystem
+description: Revolutionary reactive UI builder with AI agent interface

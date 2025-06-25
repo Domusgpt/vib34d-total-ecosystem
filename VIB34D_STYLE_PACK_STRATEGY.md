@@ -180,15 +180,9 @@ function MyReactiveButton() {
     return (
         <VIB34DElement
             geometry="hypercube"
-            parameters={{
-                dimension: 4.0,
-                morphFactor: 0.7
-            }}
-            interactions={{
-                hover: { target: 'gridDensity', intensity: 1.5 },
-                click: { target: 'dimension', intensity: 0.8 }
-            }}
-            style={{ width: '200px', height: '100px' }}
+            parameters={/* dimension: 4.0, morphFactor: 0.7 */}
+            interactions={/* hover: gridDensity 1.5, click: dimension 0.8 */}
+            style={/* width: 200px, height: 100px */}
         >
             Click Me!
         </VIB34DElement>
