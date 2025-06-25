@@ -758,26 +758,38 @@
             
             initializeElementVisualizer(elementData, canvas) {
                 try {
-                    // Direct WebGL implementation - NO FALLBACKS
                     if (window.VIB34D_WorkingCore) {
                         console.log(`🚀 Creating WebGL visualizer for ${elementData.id}`);
                         
-                        // Select appropriate geometry class
                         let GeometryClass;
+                        const coreGeometries = window.VIB34D_WorkingCore;
+
                         switch(elementData.geometry) {
-                            case 'hypercube': GeometryClass = window.VIB34D_WorkingCore.HypercubeGeometry; break;
-                            case 'sphere': GeometryClass = window.VIB34D_WorkingCore.HypersphereGeometry; break;
-                            case 'torus': GeometryClass = window.VIB34D_WorkingCore.TorusGeometry; break;
-                            case 'klein': GeometryClass = window.VIB34D_WorkingCore.KleinBottleGeometry; break;
-                            case 'mobius': GeometryClass = window.VIB34D_WorkingCore.MobiusGeometry; break;
-                            case 'lorenz': GeometryClass = window.VIB34D_WorkingCore.LorenzAttractorGeometry; break;
-                            case 'hopf': GeometryClass = window.VIB34D_WorkingCore.HopfLinkGeometry; break;
-                            case 'tesseract': GeometryClass = window.VIB34D_WorkingCore.TesseractGeometry; break;
-                            default: GeometryClass = window.VIB34D_WorkingCore.HypercubeGeometry;
+                            case 'hypercube': GeometryClass = coreGeometries.HypercubeGeometry; break;
+                            case 'sphere': GeometryClass = coreGeometries.HypersphereGeometry; break;
+                            case 'tetrahedron': GeometryClass = coreGeometries.HypertetrahedronGeometry; break;
+                            case 'torus': GeometryClass = coreGeometries.TorusGeometry; break;
+                            case 'klein': GeometryClass = coreGeometries.KleinGeometry; break;
+                            case 'fractal': GeometryClass = coreGeometries.FractalGeometry; break;
+                            case 'wave': GeometryClass = coreGeometries.WaveGeometry; break;
+                            case 'crystal': GeometryClass = coreGeometries.CrystalGeometry; break;
+                            case 'mobius':
+                            case 'lorenz':
+                            case 'hopf':
+                            case 'tesseract':
+                                console.warn(`Unsupported geometry type '${elementData.geometry}' requested. Defaulting to Hypercube.`);
+                                GeometryClass = coreGeometries.HypercubeGeometry; break;
+                            default:
+                                console.warn(`Unknown geometry type '${elementData.geometry}'. Defaulting to Hypercube.`);
+                                GeometryClass = coreGeometries.HypercubeGeometry;
                         }
                         
-                        // Create the core with proper geometry
-                        const core = new window.VIB34D_WorkingCore.HypercubeCore(canvas, {
+                        if (!GeometryClass) {
+                            console.error(`FATAL: GeometryClass is undefined for geometry type '${elementData.geometry}'. Defaulting to Hypercube.`);
+                            GeometryClass = coreGeometries.HypercubeGeometry;
+                        }
+
+                        const core = new coreGeometries.HypercubeCore(canvas, {
                             geometry: new GeometryClass(),
                             initialUniforms: {
                                 u_dimension: elementData.properties.dimension,
@@ -787,7 +799,6 @@
                             }
                         });
                         
-                        // Configure based on element properties
                         core.updateParameters({
                             geometryType: elementData.geometry,
                             projectionMethod: 'perspective',
@@ -803,14 +814,11 @@
                         core.start();
                         elementData.visualizer = core;
                         
-                        // Mark element as having WebGL visualizer
                         document.getElementById(elementData.id).classList.add('has-visualizer', 'webgl-renderer');
                         console.log(`✅ WebGL visualizer created for ${elementData.id}`);
                         
                     } else {
                         console.warn('VIB34D_WorkingCore not available');
-                        
-                        // Show placeholder
                         const ctx = canvas.getContext('2d');
                         ctx.fillStyle = '#333';
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -822,6 +830,16 @@
                     }
                 } catch (error) {
                     console.error('Failed to initialize visualizer:', error);
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.fillStyle = '#500';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = '#ff0';
+                        ctx.font = '12px Courier New';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('ERROR', canvas.width/2, canvas.height/2 - 10);
+                        ctx.fillText('Visualizer failed', canvas.width/2, canvas.height/2 + 10);
+                    }
                 }
             }
             
@@ -1351,10 +1369,19 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
         // Initialize editor dashboard
         let editorDashboard;
             window.addEventListener('DOMContentLoaded', async () => { // Make this async
-            editorDashboard = new VIB34DEditorDashboard();
-                await editorDashboard.fullyInitialize(); // New async initialization method
-                window.editorDashboard = editorDashboard; // Expose after full init
-            console.log('🎨 VIB34D Editor Dashboard ready for reactive UI creation!');
+                try {
+                    editorDashboard = new VIB34DEditorDashboard();
+                    await editorDashboard.fullyInitialize(); // New async initialization method
+                    window.editorDashboard = editorDashboard; // Expose after full init
+                    console.log('🎨 VIB34D Editor Dashboard ready for reactive UI creation!');
+                } catch (error) {
+                    console.error('🔴 CRITICAL ERROR during VIB34DEditorDashboard initialization:', error);
+                    // Display error message on the page for better visibility if console is not open
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;padding:20px;background:red;color:white;font-size:16px;z-index:9999;font-family:monospace;';
+                    errorDiv.innerHTML = `<strong>CRITICAL DASHBOARD INIT ERROR:</strong><br><pre>${error.stack || error.message}</pre>`;
+                    document.body.prepend(errorDiv);
+                }
         });
     </script>
 </body>
