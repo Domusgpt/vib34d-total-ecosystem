@@ -598,9 +598,9 @@
     </div>
     
     <script src="VIB34D_WORKING_CORE_ARCHITECTURE.js"></script>
+    <script src="VIB34D_WEBGL_FALLBACK.js"></script>
     <script src="VIB34D_MOIRE_RGB_SYSTEM.js"></script>
     <script src="VIB34D_INTEGRATED_SYSTEM_BRIDGE.js"></script>
-    <!-- WebGL fallback removed - using direct core implementation -->
     <script>
         // Editor Dashboard System
         class VIB34DEditorDashboard {
@@ -1341,7 +1341,7 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
                         <div id="generated-elements">
                             <!-- Generated elements would appear here -->
                         </div>
-                        <pre>${generatedCode}</pre>
+                        <pre>` + generatedCode + `</pre>
                     </div>
                 </body>
                 </html>

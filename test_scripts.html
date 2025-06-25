@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VIB34D Script Loading Test</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        .status { margin: 10px 0; }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+    </style>
+</head>
+<body>
+    <h1>🧪 VIB34D Script Loading Test</h1>
+    <div id="test-results"></div>
+    
+    <script>
+        const testResults = document.getElementById('test-results');
+        const scripts = [
+            'VIB34D_WORKING_CORE_ARCHITECTURE.js',
+            'VIB34D_WEBGL_FALLBACK.js',
+            'VIB34D_MOIRE_RGB_SYSTEM.js',
+            'VIB34D_INTEGRATED_SYSTEM_BRIDGE.js'
+        ];
+        
+        function addResult(script, success, message) {
+            const div = document.createElement('div');
+            div.className = `status ${success ? 'success' : 'error'}`;
+            div.textContent = `${success ? '✅' : '❌'} ${script}: ${message}`;
+            testResults.appendChild(div);
+        }
+        
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => resolve(src);
+                script.onerror = () => reject(new Error(`Failed to load ${src}`));
+                document.head.appendChild(script);
+            });
+        }
+        
+        async function testScripts() {
+            for (const script of scripts) {
+                try {
+                    await loadScript(script);
+                    addResult(script, true, 'Loaded successfully');
+                } catch (error) {
+                    addResult(script, false, error.message);
+                }
+            }
+            
+            // Test if key classes are available
+            const classTests = [
+                { name: 'VIB34DWebGLFallback', exists: typeof VIB34DWebGLFallback !== 'undefined' },
+                { name: 'BaseGeometry', exists: typeof BaseGeometry !== 'undefined' },
+                { name: 'HypercubeGeometry', exists: typeof HypercubeGeometry !== 'undefined' }
+            ];
+            
+            testResults.appendChild(document.createElement('br'));
+            const classHeader = document.createElement('div');
+            classHeader.textContent = '🔍 Class Availability Tests:';
+            classHeader.style.fontWeight = 'bold';
+            testResults.appendChild(classHeader);
+            
+            classTests.forEach(test => {
+                addResult(test.name, test.exists, test.exists ? 'Class available' : 'Class not found');
+            });
+        }
+        
+        testScripts();
+    </script>
+</body>
+</html>
