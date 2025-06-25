@@ -952,6 +952,7 @@ if (typeof module !== 'undefined' && module.exports) {
 // Export to window for browser use
 if (typeof window !== 'undefined') {
     window.VIB34DIntegratedSystemBridge = VIB34DIntegratedSystemBridge;
+    window.VIB34D_IntegratedSystemBridge = VIB34DIntegratedSystemBridge; // For test compatibility
     window.VIB34DIntegratedSystemTester = VIB34DIntegratedSystemTester;
     console.log('🌉 VIB34D Integrated System Bridge loaded and exported to window');
 }

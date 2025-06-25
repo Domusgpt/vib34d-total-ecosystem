@@ -649,53 +649,63 @@ class ShaderManager {
     }
     
     _getBaseVertexShaderSource() { 
-        return `attribute vec2 a_position; varying vec2 v_uv; void main() { v_uv = a_position * 0.5 + 0.5; gl_Position = vec4(a_position, 0.0, 1.0); }`; 
+        // Using template literal for consistency, though this one is simple enough.
+        return `attribute vec2 a_position; varying vec2 v_uv; void main() { v_uv = a_position * 0.5 + 0.5; gl_Position = vec4(a_position, 0.0, 1.0); }`;
     }
     
     _getBaseFragmentShaderSource() {
-        return `
-            precision highp float;
-            uniform vec2 u_resolution; uniform float u_time;
-            uniform float u_dimension; uniform float u_morphFactor; uniform float u_rotationSpeed;
-            uniform float u_universeModifier; uniform float u_patternIntensity; uniform float u_gridDensity;
-            uniform float u_lineThickness; uniform float u_shellWidth; uniform float u_tetraThickness;
-            uniform float u_audioBass; uniform float u_audioMid; uniform float u_audioHigh;
-            uniform float u_glitchIntensity; uniform float u_colorShift;
-            uniform vec3 u_primaryColor; uniform vec3 u_secondaryColor; uniform vec3 u_backgroundColor;
-            varying vec2 v_uv;
-            mat4 rotXW(float a){float c=cos(a),s=sin(a);return mat4(c,0,0,-s, 0,1,0,0, 0,0,1,0, s,0,0,c);} 
-            mat4 rotYW(float a){float c=cos(a),s=sin(a);return mat4(1,0,0,0, 0,c,0,-s, 0,0,1,0, 0,s,0,c);} 
-            mat4 rotZW(float a){float c=cos(a),s=sin(a);return mat4(1,0,0,0, 0,1,0,0, 0,0,c,-s, 0,0,s,c);} 
-            mat4 rotXY(float a){float c=cos(a),s=sin(a);return mat4(c,-s,0,0, s,c,0,0, 0,0,1,0, 0,0,0,1);} 
-            mat4 rotYZ(float a){float c=cos(a),s=sin(a);return mat4(1,0,0,0, 0,c,-s,0, 0,s,c,0, 0,0,0,1);} 
-            mat4 rotXZ(float a){float c=cos(a),s=sin(a);return mat4(c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1);}
-            vec3 rgb2hsv(vec3 c){vec4 K=vec4(0.,-1./3.,2./3.,-1.);vec4 p=mix(vec4(c.bg,K.wz),vec4(c.gb,K.xy),step(c.b,c.g));vec4 q=mix(vec4(p.xyw,c.r),vec4(c.r,p.yzx),step(p.x,c.r));float d=q.x-min(q.w,q.y);float e=1e-10;return vec3(abs(q.z+(q.w-q.y)/(6.*d+e)),d/(q.x+e),q.x);} 
-            vec3 hsv2rgb(vec3 c){vec4 K=vec4(1.,2./3.,1./3.,3.);vec3 p=abs(fract(c.xxx+K.xyz)*6.-K.www);return c.z*mix(K.xxx,clamp(p-K.xxx,0.,1.),c.y);}
-            //__PROJECTION_CODE_INJECTION_POINT__
-            //__GEOMETRY_CODE_INJECTION_POINT__
-            void main() {
-                vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0); 
-                vec2 uv = (v_uv * 2.0 - 1.0) * aspect;
-                vec3 rayOrigin = vec3(0.0, 0.0, -2.5); 
-                vec3 rayDirection = normalize(vec3(uv, 1.0));
-                float camRotY = u_time * 0.05 * u_rotationSpeed + u_audioMid * 0.1; 
-                float camRotX = sin(u_time * 0.03 * u_rotationSpeed) * 0.15 + u_audioHigh * 0.1;
-                mat4 camMat = rotXY(camRotX) * rotYZ(camRotY); 
-                rayDirection = (camMat * vec4(rayDirection, 0.0)).xyz;
-                vec3 p = rayDirection * 1.5; 
-                float latticeValue = calculateLattice(p);
-                vec3 color = mix(u_backgroundColor, u_primaryColor, latticeValue);
-                color = mix(color, u_secondaryColor, smoothstep(0.2, 0.7, u_audioMid) * latticeValue * 0.6);
-                if (abs(u_colorShift) > 0.01) { 
-                    vec3 hsv = rgb2hsv(color); 
-                    hsv.x = fract(hsv.x + u_colorShift * 0.5 + u_audioHigh * 0.1); 
-                    color = hsv2rgb(hsv); 
-                }
-                color *= (0.8 + u_patternIntensity * 0.7);
-                color = pow(clamp(color, 0.0, 1.5), vec3(0.9));
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `;
+        // Using template literal for safer multi-line string handling
+        return `precision highp float;
+uniform vec2 u_resolution; uniform float u_time;
+uniform float u_dimension; uniform float u_morphFactor; uniform float u_rotationSpeed;
+uniform float u_universeModifier; uniform float u_patternIntensity; uniform float u_gridDensity;
+uniform float u_lineThickness; uniform float u_shellWidth; uniform float u_tetraThickness;
+uniform float u_audioBass; uniform float u_audioMid; uniform float u_audioHigh;
+uniform float u_glitchIntensity; uniform float u_colorShift;
+uniform vec3 u_primaryColor; uniform vec3 u_secondaryColor; uniform vec3 u_backgroundColor;
+varying vec2 v_uv;
+
+mat4 rotXW(float a){float c=cos(a),s=sin(a);return mat4(c,0,0,-s, 0,1,0,0, 0,0,1,0, s,0,0,c);}
+mat4 rotYW(float a){float c=cos(a),s=sin(a);return mat4(1,0,0,0, 0,c,0,-s, 0,0,1,0, 0,s,0,c);}
+mat4 rotZW(float a){float c=cos(a),s=sin(a);return mat4(1,0,0,0, 0,1,0,0, 0,0,c,-s, 0,0,s,c);}
+mat4 rotXY(float a){float c=cos(a),s=sin(a);return mat4(c,-s,0,0, s,c,0,0, 0,0,1,0, 0,0,0,1);}
+mat4 rotYZ(float a){float c=cos(a),s=sin(a);return mat4(1,0,0,0, 0,c,-s,0, 0,s,c,0, 0,0,0,1);}
+mat4 rotXZ(float a){float c=cos(a),s=sin(a);return mat4(c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1);}
+
+vec3 rgb2hsv(vec3 c){vec4 K=vec4(0.,-1./3.,2./3.,-1.);vec4 p=mix(vec4(c.bg,K.wz),vec4(c.gb,K.xy),step(c.b,c.g));vec4 q=mix(vec4(p.xyw,c.r),vec4(c.r,p.yzx),step(p.x,c.r));float d=q.x-min(q.w,q.y);float e=1e-10;return vec3(abs(q.z+(q.w-q.y)/(6.*d+e)),d/(q.x+e),q.x);}
+vec3 hsv2rgb(vec3 c){vec4 K=vec4(1.,2./3.,1./3.,3.);vec3 p=abs(fract(c.xxx+K.xyz)*6.-K.www);return c.z*mix(K.xxx,clamp(p-K.xxx,0.,1.),c.y);}
+
+//__PROJECTION_CODE_INJECTION_POINT__
+//__GEOMETRY_CODE_INJECTION_POINT__
+
+void main() {
+    vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
+    vec2 uv = (v_uv * 2.0 - 1.0) * aspect;
+    vec3 rayOrigin = vec3(0.0, 0.0, -2.5);
+    vec3 rayDirection = normalize(vec3(uv, 1.0));
+
+    float camRotY = u_time * 0.05 * u_rotationSpeed + u_audioMid * 0.1;
+    float camRotX = sin(u_time * 0.03 * u_rotationSpeed) * 0.15 + u_audioHigh * 0.1;
+    mat4 camMat = rotXY(camRotX) * rotYZ(camRotY);
+    rayDirection = (camMat * vec4(rayDirection, 0.0)).xyz;
+
+    vec3 p = rayDirection * 1.5;
+    float latticeValue = calculateLattice(p);
+
+    vec3 color = mix(u_backgroundColor, u_primaryColor, latticeValue);
+    color = mix(color, u_secondaryColor, smoothstep(0.2, 0.7, u_audioMid) * latticeValue * 0.6);
+
+    if (abs(u_colorShift) > 0.01) {
+        vec3 hsv = rgb2hsv(color);
+        hsv.x = fract(hsv.x + u_colorShift * 0.5 + u_audioHigh * 0.1);
+        color = hsv2rgb(hsv);
+    }
+
+    color *= (0.8 + u_patternIntensity * 0.7);
+    color = pow(clamp(color, 0.0, 1.5), vec3(0.9)); // Basic tone mapping
+
+    gl_FragColor = vec4(color, 1.0);
+}`;
     }
 }
 

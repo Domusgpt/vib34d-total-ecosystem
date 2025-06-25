@@ -801,5 +801,6 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
     window.VIB34DMoireRGBEngine = VIB34DMoireRGBEngine;
     window.VIB34DMoireRGBTester = VIB34DMoireRGBTester;
+    window.VIB34D_MoireRGB = VIB34DMoireRGBEngine; // For test compatibility
     console.log('🌈 VIB34D Moiré RGB System loaded and exported to window');
 }

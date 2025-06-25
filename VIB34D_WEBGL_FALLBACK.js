@@ -182,6 +182,8 @@ window.VIB34DWebGLFallback = VIB34DWebGLFallback;
 
 // Auto-initialize if needed
 if (typeof window !== 'undefined') {
-    window.vib34dFallback = new VIB34DWebGLFallback();
+    window.VIB34DWebGLFallback = VIB34DWebGLFallback; // Expose the class
+    window.vib34dFallback = new VIB34DWebGLFallback(); // Expose an instance
+    window.VIB34D_WEBGL_FALLBACK = window.vib34dFallback; // For test compatibility
     console.log('🎮 VIB34D WebGL Fallback System initialized');
 }

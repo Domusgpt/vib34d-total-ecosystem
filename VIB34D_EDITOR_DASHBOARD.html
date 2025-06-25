@@ -610,18 +610,20 @@
                 this.nextElementId = 1;
                 this.relationships = new Map();
                 this.isPreviewMode = false;
-                
-                // Initialize integrated system bridge
                 this.systemBridge = null;
-                this.initializeSystemBridge();
-                
-                this.initialize();
+                // DO NOT call async operations directly in constructor if they need to complete
+                // before other setup steps that depend on them.
             }
-            
+
+            async fullyInitialize() { // New method
+                await this.initializeSystemBridge();
+                this.initialize(); // This is the original initialize method
+            }
+
             async initializeSystemBridge() {
                 try {
-                    if (window.VIB34DIntegratedSystemBridge) {
-                        this.systemBridge = new VIB34DIntegratedSystemBridge();
+                    if (window.VIB34DIntegratedSystemBridge) { // Check for the correct global variable name
+                        this.systemBridge = new window.VIB34DIntegratedSystemBridge();
                         await this.systemBridge.initialize();
                         console.log('✅ Integrated system bridge connected to editor');
                     } else {
@@ -1348,8 +1350,10 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
         
         // Initialize editor dashboard
         let editorDashboard;
-        window.addEventListener('DOMContentLoaded', () => {
+            window.addEventListener('DOMContentLoaded', async () => { // Make this async
             editorDashboard = new VIB34DEditorDashboard();
+                await editorDashboard.fullyInitialize(); // New async initialization method
+                window.editorDashboard = editorDashboard; // Expose after full init
             console.log('🎨 VIB34D Editor Dashboard ready for reactive UI creation!');
         });
     </script>
