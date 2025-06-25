@@ -1306,10 +1306,7 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
         ${elementData.id}Core.start();\n`;
             });
             
-            fullCode += '</script>';
-</body>
-</html>
-            `;
+            fullCode += '</script>\n</body>\n</html>';
             
             const blob = new Blob([fullCode], { type: 'text/html' });
             const url = URL.createObjectURL(blob);

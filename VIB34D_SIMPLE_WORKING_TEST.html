@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIB34D System Test - Simple Working Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        button {
+            background: #0ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #fff;
+            box-shadow: 0 0 10px #0ff;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .test-area {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .draggable-element {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: move;
+            transition: transform 0.1s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .draggable-element:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 30px rgba(255, 0, 255, 0.5);
+        }
+        
+        .draggable-element.dragging {
+            opacity: 0.8;
+            transform: scale(1.1);
+            z-index: 1000;
+        }
+        
+        .visualizer-container {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .visualizer-canvas {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #000;
+        }
+        
+        .status {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #0ff;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .error {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #44ff44;
+            font-weight: bold;
+        }
+        
+        .info {
+            color: #ffff44;
+        }
+        
+        input[type="range"] {
+            width: 200px;
+            margin: 0 10px;
+        }
+        
+        label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background-image: 
+                repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.1) 0px, transparent 1px, transparent 40px, rgba(0, 255, 255, 0.1) 40px),
+                repeating-linear-gradient(90deg, rgba(0, 255, 255, 0.1) 0px, transparent 1px, transparent 40px, rgba(0, 255, 255, 0.1) 40px);
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VIB34D System Test - Simple Working Demo</h1>
+        
+        <div class="controls">
+            <button onclick="createTestElement()">Add Test Element</button>
+            <button onclick="clearTestArea()">Clear Test Area</button>
+            <button onclick="toggleVisualizer()">Toggle Visualizer</button>
+            <button onclick="testMoirePattern()">Test Moire Pattern</button>
+            <button onclick="testWebGLFallback()">Test WebGL Fallback</button>
+            <label>
+                Animation Speed:
+                <input type="range" id="animSpeed" min="0" max="100" value="50" onchange="updateAnimationSpeed(this.value)">
+                <span id="speedValue">50</span>
+            </label>
+            <button onclick="runSystemDiagnostics()">Run Diagnostics</button>
+        </div>
+        
+        <div class="test-area" id="testArea">
+            <div class="grid-overlay"></div>
+            <!-- Test elements will be created here -->
+        </div>
+        
+        <div class="visualizer-container">
+            <h3>VIB34D Visualizer</h3>
+            <canvas class="visualizer-canvas" id="visualizerCanvas"></canvas>
+        </div>
+        
+        <div class="status" id="statusLog">
+            <div class="info">System initializing...</div>
+        </div>
+    </div>
+
+    <!-- Load VIB34D System Files -->
+    <script src="VIB34D_WORKING_CORE_ARCHITECTURE.js"></script>
+    <script src="VIB34D_WEBGL_FALLBACK.js"></script>
+    <script src="VIB34D_MOIRE_RGB_SYSTEM.js"></script>
+    <script src="VIB34D_INTEGRATED_SYSTEM_BRIDGE.js"></script>
+    
+    <script>
+        // Global variables
+        let vib34dSystem = null;
+        let elementCounter = 0;
+        let visualizerActive = true;
+        let animationSpeed = 50;
+        
+        // Status logging
+        function log(message, type = 'info') {
+            const statusLog = document.getElementById('statusLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = type;
+            entry.textContent = `[${timestamp}] ${message}`;
+            statusLog.appendChild(entry);
+            statusLog.scrollTop = statusLog.scrollHeight;
+            
+            // Also log to console
+            console.log(`[VIB34D Test] ${message}`);
+        }
+        
+        // Initialize VIB34D System
+        function initializeSystem() {
+            try {
+                log('Initializing VIB34D System...', 'info');
+                
+                // Check if required components are loaded
+                if (typeof window.VIB34D === 'undefined') {
+                    throw new Error('VIB34D core not loaded');
+                }
+                
+                // Initialize the system
+                vib34dSystem = new window.VIB34D.IntegratedSystemBridge();
+                
+                // Set up the visualizer canvas
+                const canvas = document.getElementById('visualizerCanvas');
+                if (vib34dSystem.initialize) {
+                    vib34dSystem.initialize(canvas);
+                }
+                
+                log('VIB34D System initialized successfully!', 'success');
+                
+                // Create initial test elements
+                createInitialElements();
+                
+                // Start animation loop
+                startAnimationLoop();
+                
+            } catch (error) {
+                log(`Initialization error: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+        
+        // Create initial test elements
+        function createInitialElements() {
+            for (let i = 0; i < 3; i++) {
+                createTestElement();
+            }
+            log('Created 3 initial test elements', 'info');
+        }
+        
+        // Create a new draggable test element
+        function createTestElement() {
+            try {
+                const testArea = document.getElementById('testArea');
+                const element = document.createElement('div');
+                element.className = 'draggable-element';
+                element.id = `element-${elementCounter++}`;
+                element.textContent = `Element ${elementCounter}`;
+                
+                // Random position
+                const maxX = testArea.offsetWidth - 120;
+                const maxY = testArea.offsetHeight - 120;
+                element.style.left = Math.random() * maxX + 'px';
+                element.style.top = Math.random() * maxY + 'px';
+                
+                // Random color
+                const colors = [
+                    'linear-gradient(45deg, #ff006e, #8338ec)',
+                    'linear-gradient(45deg, #00d9ff, #ee00ff)',
+                    'linear-gradient(45deg, #ff7700, #ff0077)',
+                    'linear-gradient(45deg, #00ff88, #00d9ff)'
+                ];
+                element.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Add drag functionality
+                makeDraggable(element);
+                
+                testArea.appendChild(element);
+                
+                // Register with VIB34D system if available
+                if (vib34dSystem && vib34dSystem.registerElement) {
+                    vib34dSystem.registerElement(element);
+                }
+                
+                log(`Created element: ${element.id}`, 'success');
+                
+            } catch (error) {
+                log(`Error creating element: ${error.message}`, 'error');
+            }
+        }
+        
+        // Make element draggable
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+            
+            element.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            
+            function startDrag(e) {
+                isDragging = true;
+                element.classList.add('dragging');
+                
+                startX = e.clientX;
+                startY = e.clientY;
+                initialX = element.offsetLeft;
+                initialY = element.offsetTop;
+                
+                e.preventDefault();
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                
+                element.style.left = initialX + dx + 'px';
+                element.style.top = initialY + dy + 'px';
+                
+                // Update VIB34D system if available
+                if (vib34dSystem && vib34dSystem.updateElement) {
+                    vib34dSystem.updateElement(element.id, {
+                        x: initialX + dx,
+                        y: initialY + dy
+                    });
+                }
+            }
+            
+            function stopDrag() {
+                if (isDragging) {
+                    isDragging = false;
+                    element.classList.remove('dragging');
+                    log(`Moved ${element.id} to (${element.offsetLeft}, ${element.offsetTop})`, 'info');
+                }
+            }
+        }
+        
+        // Clear test area
+        function clearTestArea() {
+            const testArea = document.getElementById('testArea');
+            const elements = testArea.querySelectorAll('.draggable-element');
+            elements.forEach(el => el.remove());
+            elementCounter = 0;
+            log('Cleared all test elements', 'info');
+        }
+        
+        // Toggle visualizer
+        function toggleVisualizer() {
+            visualizerActive = !visualizerActive;
+            const container = document.querySelector('.visualizer-container');
+            container.style.display = visualizerActive ? 'block' : 'none';
+            log(`Visualizer ${visualizerActive ? 'enabled' : 'disabled'}`, 'info');
+        }
+        
+        // Test Moire pattern
+        function testMoirePattern() {
+            try {
+                if (window.VIB34D && window.VIB34D.MoireRGBSystem) {
+                    const moireSystem = new window.VIB34D.MoireRGBSystem();
+                    moireSystem.generatePattern();
+                    log('Moire pattern test completed', 'success');
+                } else {
+                    throw new Error('MoireRGBSystem not available');
+                }
+            } catch (error) {
+                log(`Moire pattern test error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test WebGL fallback
+        function testWebGLFallback() {
+            try {
+                if (window.VIB34D && window.VIB34D.WebGLFallback) {
+                    const fallback = new window.VIB34D.WebGLFallback();
+                    const canvas = document.getElementById('visualizerCanvas');
+                    fallback.initialize(canvas);
+                    log('WebGL fallback test completed', 'success');
+                } else {
+                    throw new Error('WebGLFallback not available');
+                }
+            } catch (error) {
+                log(`WebGL fallback test error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Update animation speed
+        function updateAnimationSpeed(value) {
+            animationSpeed = parseInt(value);
+            document.getElementById('speedValue').textContent = value;
+            log(`Animation speed set to ${value}%`, 'info');
+        }
+        
+        // Run system diagnostics
+        function runSystemDiagnostics() {
+            log('Running system diagnostics...', 'info');
+            
+            // Check loaded components
+            const components = {
+                'Core Architecture': typeof window.VIB34D !== 'undefined',
+                'WebGL Fallback': window.VIB34D && typeof window.VIB34D.WebGLFallback !== 'undefined',
+                'Moire RGB System': window.VIB34D && typeof window.VIB34D.MoireRGBSystem !== 'undefined',
+                'Integrated Bridge': window.VIB34D && typeof window.VIB34D.IntegratedSystemBridge !== 'undefined'
+            };
+            
+            for (const [name, loaded] of Object.entries(components)) {
+                log(`${name}: ${loaded ? 'LOADED' : 'NOT LOADED'}`, loaded ? 'success' : 'error');
+            }
+            
+            // Check WebGL support
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            log(`WebGL Support: ${gl ? 'AVAILABLE' : 'NOT AVAILABLE'}`, gl ? 'success' : 'error');
+            
+            // Check system instance
+            log(`System Instance: ${vib34dSystem ? 'CREATED' : 'NOT CREATED'}`, vib34dSystem ? 'success' : 'error');
+            
+            // Element count
+            const elements = document.querySelectorAll('.draggable-element').length;
+            log(`Active Elements: ${elements}`, 'info');
+            
+            log('Diagnostics complete', 'success');
+        }
+        
+        // Animation loop
+        function startAnimationLoop() {
+            function animate() {
+                if (visualizerActive && vib34dSystem && vib34dSystem.update) {
+                    vib34dSystem.update(animationSpeed / 100);
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+            log('Animation loop started', 'info');
+        }
+        
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, initializing VIB34D system...', 'info');
+            setTimeout(initializeSystem, 100); // Small delay to ensure all scripts are loaded
+        });
+        
+        // Error handling
+        window.addEventListener('error', (event) => {
+            log(`Global error: ${event.message} at ${event.filename}:${event.lineno}`, 'error');
+        });
+    </script>
+</body>
+</html>
