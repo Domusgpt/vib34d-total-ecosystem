@@ -400,26 +400,26 @@
         </div>
         
         <!-- Left Panel - Element Library -->
-        <div class="element-library">
+        <div id="element-library" class="element-library">
             <div class="library-section">
                 <div class="library-title">🎮 Interactive Elements</div>
                 <div class="element-grid">
-                    <div class="element-item" draggable="true" data-type="button" data-geometry="hypercube">
+                    <div class="element-item library-item" draggable="true" data-type="button" data-geometry="hypercube">
                         <span class="element-icon">🔲</span>
                         <div class="element-name">Button</div>
                         <div class="element-type">Hypercube</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="card" data-geometry="sphere">
+                    <div class="element-item library-item" draggable="true" data-type="card" data-geometry="sphere">
                         <span class="element-icon">🎴</span>
                         <div class="element-name">Card</div>
                         <div class="element-type">Sphere</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="nav" data-geometry="tetrahedron">
+                    <div class="element-item library-item" draggable="true" data-type="nav" data-geometry="tetrahedron">
                         <span class="element-icon">🧭</span>
                         <div class="element-name">Navigation</div>
                         <div class="element-type">Tetrahedron</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="header" data-geometry="wave">
+                    <div class="element-item library-item" draggable="true" data-type="header" data-geometry="wave">
                         <span class="element-icon">📄</span>
                         <div class="element-name">Header</div>
                         <div class="element-type">Wave</div>
@@ -430,22 +430,22 @@
             <div class="library-section">
                 <div class="library-title">🌊 Background Elements</div>
                 <div class="element-grid">
-                    <div class="element-item" draggable="true" data-type="background" data-geometry="klein">
+                    <div class="element-item library-item" draggable="true" data-type="background" data-geometry="klein">
                         <span class="element-icon">🌌</span>
                         <div class="element-name">Background</div>
                         <div class="element-type">Klein</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="section" data-geometry="fractal">
+                    <div class="element-item library-item" draggable="true" data-type="section" data-geometry="fractal">
                         <span class="element-icon">📐</span>
                         <div class="element-name">Section</div>
                         <div class="element-type">Fractal</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="overlay" data-geometry="crystal">
+                    <div class="element-item library-item" draggable="true" data-type="overlay" data-geometry="crystal">
                         <span class="element-icon">💎</span>
                         <div class="element-name">Overlay</div>
                         <div class="element-type">Crystal</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="accent" data-geometry="torus">
+                    <div class="element-item library-item" draggable="true" data-type="accent" data-geometry="torus">
                         <span class="element-icon">🍩</span>
                         <div class="element-name">Accent</div>
                         <div class="element-type">Torus</div>
@@ -456,22 +456,22 @@
             <div class="library-section">
                 <div class="library-title">🎛️ Layout Elements</div>
                 <div class="element-grid">
-                    <div class="element-item" draggable="true" data-type="grid" data-geometry="hypercube">
+                    <div class="element-item library-item" draggable="true" data-type="grid" data-geometry="hypercube">
                         <span class="element-icon">🔲</span>
                         <div class="element-name">Grid</div>
                         <div class="element-type">Multi-Cube</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="sidebar" data-geometry="tetrahedron">
+                    <div class="element-item library-item" draggable="true" data-type="sidebar" data-geometry="tetrahedron">
                         <span class="element-icon">📋</span>
                         <div class="element-name">Sidebar</div>
                         <div class="element-type">Tetrahedron</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="modal" data-geometry="sphere">
+                    <div class="element-item library-item" draggable="true" data-type="modal" data-geometry="sphere">
                         <span class="element-icon">⭕</span>
                         <div class="element-name">Modal</div>
                         <div class="element-type">Sphere</div>
                     </div>
-                    <div class="element-item" draggable="true" data-type="footer" data-geometry="wave">
+                    <div class="element-item library-item" draggable="true" data-type="footer" data-geometry="wave">
                         <span class="element-icon">📰</span>
                         <div class="element-name">Footer</div>
                         <div class="element-type">Wave</div>
@@ -481,7 +481,7 @@
         </div>
         
         <!-- Center Canvas -->
-        <div class="canvas-workspace" id="canvas-workspace">
+        <div class="canvas-workspace" id="canvas" id="canvas-workspace">
             <div class="canvas-grid"></div>
             <div class="canvas-content" id="canvas-content">
                 <!-- Dropped elements will appear here -->
@@ -489,7 +489,7 @@
         </div>
         
         <!-- Right Panel - Properties -->
-        <div class="properties-panel">
+        <div class="properties-panel" id="properties-panel">
             <div class="properties-section">
                 <div class="properties-title">🎯 Element Properties</div>
                 <div id="element-properties">
@@ -1347,9 +1347,8 @@ applyVIB34DConfig('${elementId}', ${elementId}Config);
         }
         
         // Initialize editor dashboard
-        let editorDashboard;
         window.addEventListener('DOMContentLoaded', () => {
-            editorDashboard = new VIB34DEditorDashboard();
+            window.editorDashboard = new VIB34DEditorDashboard();
             console.log('🎨 VIB34D Editor Dashboard ready for reactive UI creation!');
         });
     </script>
