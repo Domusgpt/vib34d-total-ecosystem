@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minimal VIB34D Test</title>
+</head>
+<body>
+    <div id="element-library">Library</div>
+    <div id="canvas">Canvas</div>
+    <div id="properties-panel">Properties</div>
+
+    <script>
+        // Minimal VIB34D Editor Dashboard
+        class VIB34DEditorDashboard {
+            constructor() {
+                this.elements = new Map();
+                this.selectedElement = null;
+                this.nextElementId = 1;
+                console.log('VIB34D Editor Dashboard initialized');
+            }
+            
+            initialize() {
+                console.log('Dashboard initialized successfully');
+            }
+        }
+        
+        // Initialize immediately
+        window.editorDashboard = new VIB34DEditorDashboard();
+        console.log('Dashboard available:', typeof window.editorDashboard);
+    </script>
+</body>
+</html>
